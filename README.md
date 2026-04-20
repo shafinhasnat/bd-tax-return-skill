@@ -43,59 +43,45 @@ Covers **AY 2025-26** (income year July 2024 – June 2025) and **AY 2026-27** (
 
 ### Option A — Claude Code CLI (Recommended)
 
-Claude Code supports custom slash commands via Markdown files in a `.claude/commands/` directory.
+Claude Code loads skills from a `skills/` directory. Each skill lives in its own named subdirectory containing `SKILL.md`. The directory name becomes the `/slash-command`.
 
-**Project-level (only available in that project):**
+**Personal install — available in all your projects:**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/bd-tax-return-skill.git
+# Clone directly into your personal skills folder
+git clone https://github.com/YOUR_USERNAME/bd-tax-return-skill.git \
+  ~/.claude/skills/bangladesh-tax-return
+```
+
+That's it. Open any Claude Code session and type:
+
+```
+/bangladesh-tax-return
+```
+
+**Project-level install — only available in one project:**
+
+```bash
 cd your-project
-mkdir -p .claude/commands
-cp path/to/bd-tax-return-skill/SKILL.md .claude/commands/bangladesh-tax-return.md
+git clone https://github.com/YOUR_USERNAME/bd-tax-return-skill.git \
+  .claude/skills/bangladesh-tax-return
 ```
 
-Then open Claude Code in your project:
+Commit `.claude/skills/` to version control so teammates get the skill automatically.
 
-```bash
-claude
+**Verify the skill loaded:**
+
+```
+/help
 ```
 
-Type `/bangladesh-tax-return` to start the interview.
+`bangladesh-tax-return` should appear in the skill list.
 
-**Global (available in every project):**
-
-```bash
-mkdir -p ~/.claude/commands
-cp path/to/bd-tax-return-skill/SKILL.md ~/.claude/commands/bangladesh-tax-return.md
-```
-
-The skill reads its reference files at runtime. For the references and template to load correctly, also copy the supporting folders:
-
-```bash
-# if using project-level setup
-cp -r path/to/bd-tax-return-skill/references  .claude/commands/references
-cp -r path/to/bd-tax-return-skill/templates   .claude/commands/templates
-
-# if using global setup
-cp -r path/to/bd-tax-return-skill/references  ~/.claude/commands/references
-cp -r path/to/bd-tax-return-skill/templates   ~/.claude/commands/templates
-```
-
-Or simply clone the whole repo directly into the commands folder:
-
-```bash
-# Global install (simplest)
-git clone https://github.com/YOUR_USERNAME/bd-tax-return-skill.git ~/.claude/commands/bangladesh-tax-return
-
-# Then invoke with:
-#   /bangladesh-tax-return/SKILL
-```
-
-> **Tip:** After setup, run `/help` in Claude Code to confirm the command appears in the list.
+> **How it works:** Claude Code watches `~/.claude/skills/` and `.claude/skills/` for changes. No restart needed after cloning (unless the skills directory itself is brand new — in that case restart Claude Code once).
 
 ---
 
-### Option B — Claude.ai Web (No Setup)
+### Option B — Claude.ai Web (No Install)
 
 No installation needed.
 
@@ -103,13 +89,13 @@ No installation needed.
 2. Copy the full contents of `SKILL.md` and paste it as your first message
 3. Claude will begin the interview immediately
 
-For the best results, also paste the relevant reference files (`tax-rates-ay-2026-27.md`, `investment-rebate.md`, etc.) into the same conversation before starting — or attach them as files if your plan supports it.
+For best results, also paste the relevant reference files (`tax-rates-ay-2026-27.md`, `investment-rebate.md`, etc.) into the same conversation before starting, or attach them as files if your plan supports it.
 
 ---
 
 ### Option C — API / Custom App
 
-Use `SKILL.md` as the system prompt. Pass the reference files as additional context (tool-readable files, RAG chunks, or inline in the system prompt).
+Use `SKILL.md` as the system prompt. Append reference files for full computation accuracy.
 
 ```python
 import anthropic
@@ -117,8 +103,13 @@ import anthropic
 with open("SKILL.md") as f:
     system = f.read()
 
-# Optionally append reference content
-for ref in ["references/tax-rates-ay-2026-27.md", "references/investment-rebate.md"]:
+for ref in [
+    "references/tax-rates-ay-2026-27.md",
+    "references/investment-rebate.md",
+    "references/minimum-tax.md",
+    "references/surcharge.md",
+    "references/return-form-fields.md",
+]:
     with open(ref) as f:
         system += "\n\n---\n" + f.read()
 
