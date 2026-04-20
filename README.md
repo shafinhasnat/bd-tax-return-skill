@@ -49,7 +49,7 @@ Claude Code loads skills from a `skills/` directory. Each skill lives in its own
 
 ```bash
 # Clone directly into your personal skills folder
-git clone https://github.com/YOUR_USERNAME/bd-tax-return-skill.git \
+git clone https://github.com/shafinhasnat/bd-tax-return-skill.git \
   ~/.claude/skills/bangladesh-tax-return
 ```
 
@@ -63,7 +63,7 @@ That's it. Open any Claude Code session and type:
 
 ```bash
 cd your-project
-git clone https://github.com/YOUR_USERNAME/bd-tax-return-skill.git \
+git clone https://github.com/shafinhasnat/bd-tax-return-skill.git \
   .claude/skills/bangladesh-tax-return
 ```
 
